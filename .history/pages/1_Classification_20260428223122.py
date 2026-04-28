@@ -4,177 +4,191 @@ from utils.preprocessing import prepare_input_classification
 
 st.set_page_config(page_title="Classification - Risque Dépression", page_icon="🔍", layout="wide")
 
+# ─── CSS GLOBAL ───────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
 
+/* Base */
 html, body, [class*="css"] {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
 }
 
+/* Fond principal */
 .stApp {
-    background-color: #f7f5f0;
+    background: linear-gradient(135deg, #0f1117 0%, #1a1f2e 50%, #0f1117 100%);
+    min-height: 100vh;
 }
 
+/* Titre principal */
 h1 {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 2rem !important;
-    font-weight: 700 !important;
-    color: #1a3a5c !important;
+    font-family: 'DM Serif Display', serif !important;
+    font-size: 2.2rem !important;
+    background: linear-gradient(90deg, #e0eaff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: -0.5px;
+    margin-bottom: 0.2rem !important;
 }
 
+/* Sous-titre markdown */
 .stMarkdown p {
-    color: #5a6e82 !important;
-    font-size: 0.93rem;
+    color: #8892b0 !important;
+    font-size: 0.95rem;
 }
 
+/* Header section */
 h2 {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: 'DM Sans', sans-serif !important;
     font-weight: 600 !important;
-    color: #1a3a5c !important;
-    font-size: 1.15rem !important;
-    border-bottom: 2px solid #e8b84b !important;
-    padding-bottom: 0.4rem !important;
-}
-
-h3 {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-weight: 700 !important;
-    color: #1a3a5c !important;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    color: #cdd6f4 !important;
+    font-size: 1.25rem !important;
+    border-bottom: 1px solid #2a2f45;
+    padding-bottom: 0.5rem;
     margin-bottom: 1.2rem !important;
-    background: #e8b84b;
-    border-radius: 4px;
-    padding: 0.3rem 0.7rem;
-    display: inline-block;
 }
 
+/* Subheaders colonnes */
+h3 {
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 500 !important;
+    color: #a5b4fc !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem !important;
+}
+
+/* Blocs colonnes */
 [data-testid="column"] {
-    background: #ffffff;
-    border: 1px solid #e2ddd4;
-    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(165,180,252,0.1);
+    border-radius: 16px;
     padding: 1.4rem 1.6rem !important;
-    box-shadow: 0 2px 8px rgba(26,58,92,0.06);
+    backdrop-filter: blur(10px);
 }
 
-label {
-    color: #3d5166 !important;
+/* Labels des inputs */
+label, .stSlider label, .stNumberInput label, .stSelectbox label {
+    color: #8892b0 !important;
     font-size: 0.82rem !important;
-    font-weight: 600 !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.03em;
 }
 
-[data-testid="stSlider"] [role="slider"] {
-    background-color: #1a6cb5 !important;
-    border-color: #1a6cb5 !important;
-}
-[data-testid="stSlider"] > div > div > div {
-    background: #1a6cb5 !important;
+/* Sliders — track */
+[data-testid="stSlider"] > div > div > div > div {
+    background: linear-gradient(90deg, #6366f1, #a5b4fc) !important;
 }
 
+/* Slider thumb */
+[data-testid="stSlider"] > div > div > div > div > div {
+    background: #a5b4fc !important;
+    border: 2px solid #6366f1 !important;
+    box-shadow: 0 0 8px rgba(99,102,241,0.5) !important;
+}
+
+/* Number inputs */
 [data-testid="stNumberInput"] input {
-    background: #f7f5f0 !important;
-    border: 1.5px solid #d6d0c4 !important;
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(165,180,252,0.2) !important;
     border-radius: 8px !important;
-    color: #1a3a5c !important;
+    color: #e2e8f0 !important;
     font-size: 0.9rem !important;
 }
 [data-testid="stNumberInput"] input:focus {
-    border-color: #1a6cb5 !important;
-    box-shadow: 0 0 0 3px rgba(26,108,181,0.15) !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.2) !important;
 }
 
+/* Selectbox */
 [data-testid="stSelectbox"] > div > div {
-    background: #f7f5f0 !important;
-    border: 1.5px solid #d6d0c4 !important;
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(165,180,252,0.2) !important;
     border-radius: 8px !important;
-    color: #1a3a5c !important;
+    color: #e2e8f0 !important;
 }
 
+/* Divider */
 hr {
-    border-color: #e2ddd4 !important;
+    border-color: rgba(165,180,252,0.15) !important;
     margin: 1.5rem 0 !important;
 }
 
+/* Bouton principal */
 .stButton > button[kind="primary"] {
-    background: #e8b84b !important;
-    color: #1a3a5c !important;
+    background: linear-gradient(135deg, #6366f1, #818cf8) !important;
+    color: white !important;
     border: none !important;
     border-radius: 10px !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    letter-spacing: 0.03em;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    letter-spacing: 0.04em;
     padding: 0.65rem 2rem !important;
-    box-shadow: 0 3px 12px rgba(232,184,75,0.4) !important;
-    transition: all 0.18s ease !important;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.35) !important;
+    transition: all 0.2s ease !important;
 }
 .stButton > button[kind="primary"]:hover {
-    background: #d4a53a !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 5px 18px rgba(232,184,75,0.5) !important;
+    box-shadow: 0 6px 28px rgba(99,102,241,0.5) !important;
 }
 
+/* Metrics */
 [data-testid="metric-container"] {
-    background: #eef4fb !important;
-    border: 1.5px solid #b8d0ea !important;
+    background: rgba(165,180,252,0.07) !important;
+    border: 1px solid rgba(165,180,252,0.15) !important;
     border-radius: 12px !important;
     padding: 1rem 1.2rem !important;
 }
 [data-testid="metric-container"] label {
-    color: #3d6a96 !important;
-    font-size: 0.78rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    color: #8892b0 !important;
+    font-size: 0.8rem !important;
 }
 [data-testid="metric-container"] [data-testid="metric-value"] {
-    color: #1a3a5c !important;
-    font-size: 2rem !important;
-    font-weight: 700 !important;
+    color: #a5b4fc !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
 }
 
+/* Alertes */
 .stSuccess {
-    background: #eaf7f0 !important;
-    border: 1.5px solid #6ecfa3 !important;
+    background: rgba(52,211,153,0.1) !important;
+    border: 1px solid rgba(52,211,153,0.25) !important;
     border-radius: 10px !important;
-    color: #1a5c3a !important;
+    color: #6ee7b7 !important;
 }
 .stError {
-    background: #fdf0ee !important;
-    border: 1.5px solid #e8836b !important;
+    background: rgba(248,113,113,0.1) !important;
+    border: 1px solid rgba(248,113,113,0.25) !important;
     border-radius: 10px !important;
-    color: #7a2214 !important;
+    color: #fca5a5 !important;
 }
 .stWarning {
-    background: #fdf8ec !important;
-    border: 1.5px solid #e8b84b !important;
+    background: rgba(251,191,36,0.1) !important;
+    border: 1px solid rgba(251,191,36,0.25) !important;
     border-radius: 10px !important;
-    color: #7a5a10 !important;
+    color: #fde68a !important;
 }
 
+/* Sidebar */
 [data-testid="stSidebar"] {
-    background: #1a3a5c !important;
+    background: rgba(15,17,23,0.95) !important;
+    border-right: 1px solid rgba(165,180,252,0.1) !important;
 }
 [data-testid="stSidebar"] .stSuccess {
-    background: rgba(232,184,75,0.15) !important;
-    border: 1px solid rgba(232,184,75,0.4) !important;
-    border-radius: 8px !important;
-    color: #e8b84b !important;
-}
-[data-testid="stSidebar"] * {
-    color: #c8d8e8 !important;
+    font-size: 0.85rem;
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #f7f5f0; }
-::-webkit-scrollbar-thumb { background: #b8d0ea; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #1a6cb5; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0f1117; }
+::-webkit-scrollbar-thumb { background: #2a2f45; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #6366f1; }
 </style>
 """, unsafe_allow_html=True)
 
+# ─── CONTENU ──────────────────────────────────────────────────────────────────
 st.title("🔍 Prédiction du Risque Élevé de Dépression")
 st.markdown("**Modèle de Classification** — Prédit si `high_risk_flag` = 1")
 
@@ -234,6 +248,8 @@ if st.button("Prédire le Risque", type="primary", use_container_width=True):
         'focus_score': focus_score,
         'digital_dependence_score': digital_dependence,
         'productivity_score': productivity,
+
+        # One-hot et encoded (valeurs par défaut)
         'gender_encoded': 0,
         'region_encoded': 0,
         'income_level_encoded': 2,
@@ -248,6 +264,7 @@ if st.button("Prédire le Risque", type="primary", use_container_width=True):
     }
 
     input_df = prepare_input_classification(user_input)
+
     proba = model.predict_proba(input_df)[0][1]
     prediction = model.predict(input_df)[0]
 
@@ -264,19 +281,7 @@ if st.button("Prédire le Risque", type="primary", use_container_width=True):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=proba * 100,
-        title={'text': "Probabilité de Haut Risque (%)", 'font': {'family': 'Plus Jakarta Sans', 'color': '#1a3a5c'}},
-        number={'font': {'color': '#1a3a5c', 'family': 'Plus Jakarta Sans'}},
-        gauge={
-            'axis': {'range': [0, 100], 'tickcolor': '#5a6e82'},
-            'bar': {'color': '#1a6cb5'},
-            'bgcolor': '#f7f5f0',
-            'steps': [
-                {'range': [0, 40], 'color': '#eef4fb'},
-                {'range': [40, 70], 'color': '#fdf8ec'},
-                {'range': [70, 100], 'color': '#fdf0ee'},
-            ],
-            'threshold': {'line': {'color': '#e8b84b', 'width': 3}, 'value': 50}
-        }
+        title={'text': "Probabilité de Haut Risque (%)"},
+        gauge={'axis': {'range': [0, 100]}}
     ))
-    fig.update_layout(paper_bgcolor='#ffffff', plot_bgcolor='#ffffff', font_color='#1a3a5c')
     st.plotly_chart(fig, use_container_width=True)
